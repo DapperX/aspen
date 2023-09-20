@@ -72,7 +72,7 @@ class list_allocator {
   static void init(size_t _alloc_size = default_alloc_size, size_t _list_size=list_size);
   static void reserve(size_t n = default_alloc_size,
 		      bool randomize = false,
-		      size_t _max_blocks = (3*getMemorySize()/sizeof(T))/4);
+		      size_t _max_blocks = (3*getMemorySize_pbbs()/sizeof(T))/4);
   static void finish();
   static size_t block_size () {return _block_size;}
   static size_t num_allocated_blocks() {return blocks_allocated;}

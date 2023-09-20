@@ -129,7 +129,7 @@ namespace compressed_lists {
     return make_tuple(first_key, last_key);
   }
 
-  void print_node(uchar* node, uintV src) {
+  inline void print_node(uchar* node, uintV src) {
     if (node) {
       auto read_iter = compressed_iter::read_iter(node, src);
       while (read_iter.has_next()) {
@@ -138,7 +138,7 @@ namespace compressed_lists {
     }
   }
 
-  auto split_node(uchar* node, uintV src, uintV split_key) {
+  inline auto split_node(uchar* node, uintV src, uintV split_key) {
     uchar* lt = nullptr; uchar* gt = nullptr; bool found = false;
     if (node) {
       auto read_iter = compressed_iter::read_iter(node, src);
@@ -180,7 +180,7 @@ namespace compressed_lists {
     return write_iter.finish();
   }
 
-  uchar* copy_node(uchar* node) {
+  inline uchar* copy_node(uchar* node) {
     if (node) {
       // bump ref_ct and return
       uint32_t* ref_ct = (uint32_t*)(node + 2*sizeof(uint16_t));
@@ -195,7 +195,7 @@ namespace compressed_lists {
     return nullptr;
   }
 
-  uchar* union_its(compressed_iter::read_iter& l_it, size_t l_size,
+  inline uchar* union_its(compressed_iter::read_iter& l_it, size_t l_size,
                    compressed_iter::read_iter& r_it, size_t r_size,
                    uintV src) {
     auto write_iter = compressed_iter::write_iter(src, l_size + r_size);
@@ -226,14 +226,14 @@ namespace compressed_lists {
   }
 
 
-  uchar* union_it_and_node(compressed_iter::read_iter& it, size_t l_size, uchar* r_node, uintV src) {
+  inline uchar* union_it_and_node(compressed_iter::read_iter& it, size_t l_size, uchar* r_node, uintV src) {
     assert(r_node);
     auto r_it = compressed_iter::read_iter(r_node, src);
     size_t r_size = r_it.deg;
     return union_its(it, l_size, r_it, r_size, src);
   }
 
-  uchar* union_nodes(uchar* l, uchar* r, uintV src) {
+  inline uchar* union_nodes(uchar* l, uchar* r, uintV src) {
     if (l && r == nullptr) return copy_node(l);
     if (r && l == nullptr) return copy_node(r);
     auto l_it = compressed_iter::read_iter(l, src);
@@ -244,7 +244,7 @@ namespace compressed_lists {
   }
 
   // returns r_it / l_it
-  uchar* difference_its(compressed_iter::read_iter& l_it, size_t l_size,
+  inline uchar* difference_its(compressed_iter::read_iter& l_it, size_t l_size,
                         compressed_iter::read_iter& r_it, size_t r_size,
                         uintV src) {
     assert(l_size > 0); assert(r_size > 0);
@@ -272,7 +272,7 @@ namespace compressed_lists {
   }
 
   // returns r_node / it
-  uchar* difference_it_and_node(compressed_iter::read_iter& it, size_t l_size, uchar* r_node, uintV src) {
+  inline uchar* difference_it_and_node(compressed_iter::read_iter& it, size_t l_size, uchar* r_node, uintV src) {
     assert(r_node);
     auto r_it = compressed_iter::read_iter(r_node, src);
     size_t r_size = r_it.deg;
@@ -280,7 +280,7 @@ namespace compressed_lists {
   }
 
   // returns r / l
-  uchar* difference(uchar* l, uchar* r, uintV src) {
+  inline uchar* difference(uchar* l, uchar* r, uintV src) {
     if (l && r == nullptr) return nullptr;
     if (r && l == nullptr) return copy_node(r);
     auto l_it = compressed_iter::read_iter(l, src);
@@ -290,7 +290,7 @@ namespace compressed_lists {
     return difference_its(l_it, l_size, r_it, r_size, src);
   }
 
-  bool contains(uchar* l, uintV src, uintV key) {
+  inline bool contains(uchar* l, uintV src, uintV key) {
     if (l) {
       auto it = compressed_iter::read_iter(l, src);
       while (it.has_next()) {
@@ -302,7 +302,7 @@ namespace compressed_lists {
     return false;
   }
 
-  size_t intersect(compressed_iter::read_iter& l_it, size_t l_size,
+  inline size_t intersect(compressed_iter::read_iter& l_it, size_t l_size,
                    compressed_iter::read_iter& r_it, size_t r_size) {
     size_t l_i = 0, r_i = 0;
     uintV lv = l_it.next(), rv = r_it.next();;
@@ -323,7 +323,7 @@ namespace compressed_lists {
     return ct;
   }
 
-  size_t intersect(uchar* l, uintV l_src, uchar* r, uintV r_src) {
+  inline size_t intersect(uchar* l, uintV l_src, uchar* r, uintV r_src) {
     if (l && r) {
       auto l_it = compressed_iter::read_iter(l, l_src);
       auto r_it = compressed_iter::read_iter(r, r_src);

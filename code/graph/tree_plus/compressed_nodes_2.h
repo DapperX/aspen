@@ -62,7 +62,7 @@ namespace compressed_lists {
   def_node(16384)
 
 
-  void init(size_t n) {
+  inline void init(size_t n) {
     using node_8 = node_8::node;
     using node_8_gc = gc<node_8>;
     node_8_gc::init(n/256, (1 << 16));
@@ -125,7 +125,7 @@ namespace compressed_lists {
   using allocator_8192 = typename node_8192::node::allocator;
   using allocator_16384 = typename node_16384::node::allocator;
 
-  void print_stats() {
+  inline void print_stats() {
     cout <<"compressed lists 2 printing stats" << endl;
 
     cout << "lists8: "; allocator_8::print_stats();
@@ -155,7 +155,7 @@ namespace compressed_lists {
     cout << "Total bytes for node allocators: " << total_bytes << endl;
   }
 
-  size_t get_used_bytes() {
+  inline size_t get_used_bytes() {
     size_t total_bytes = allocator_8::num_used_bytes() +
       allocator_16::num_used_bytes() +
       allocator_32::num_used_bytes() +

@@ -573,7 +573,7 @@ struct sym_immutable_graph_tree_plus {
     print_stats();
     cout << "stats after multi_insert" << endl << endl;
 
-    pbbs::free_array(offsets); pbbs::free_array(edges);
+    // pbbs::free_array(offsets); pbbs::free_array(edges);
     new_verts.clear();
     build_t.next("Build time");
 

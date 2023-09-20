@@ -21,7 +21,7 @@
 
 using namespace std;
 
-std::pair<char*, size_t> mmapStringFromFile(const char *filename) {
+inline std::pair<char*, size_t> mmapStringFromFile(const char *filename) {
   struct stat sb;
   int fd = open(filename, O_RDONLY);
   if (fd == -1) {
@@ -49,7 +49,7 @@ std::pair<char*, size_t> mmapStringFromFile(const char *filename) {
   return std::make_pair(p, n);
 }
 
-pbbs::sequence<char> readStringFromFile(const char* fileName) {
+inline pbbs::sequence<char> readStringFromFile(const char* fileName) {
   std::ifstream file(fileName, std::ios::in | std::ios::binary | std::ios::ate);
   if (!file.is_open()) {
     std::cout << "Unable to open file: " << fileName << "\n";
@@ -64,7 +64,7 @@ pbbs::sequence<char> readStringFromFile(const char* fileName) {
   return bytes;
 }
 
-auto read_unweighted_graph(const char* fname, bool is_symmetric, bool mmap=false) {
+inline auto read_unweighted_graph(const char* fname, bool is_symmetric, bool mmap=false) {
   pbbs::sequence<char*> tokens;
   pbbs::sequence<char> S;
   if (mmap) {
@@ -105,7 +105,7 @@ auto read_unweighted_graph(const char* fname, bool is_symmetric, bool mmap=false
   return make_tuple(n, m, offsets, edges);
 }
 
-auto read_o_direct(const char* fname) {
+inline auto read_o_direct(const char* fname) {
   int fd;
   if ( (fd = open(fname, O_RDONLY | O_DIRECT) ) != -1) {
     cout << "input opened!" << endl;
@@ -151,7 +151,7 @@ auto read_o_direct(const char* fname) {
   return s;
 }
 
-auto read_compressed_graph(const char* fname, bool is_symmetric, bool mmap=false) {
+inline auto read_compressed_graph(const char* fname, bool is_symmetric, bool mmap=false) {
   using uchar = unsigned char;
   char* s;
   size_t s_size = 0L;

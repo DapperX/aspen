@@ -608,7 +608,7 @@ namespace tree_plus {
   using Entry = typename edge_entry::entry_t; // pair<uintV, node>
   using Tree_GC = Tree::GC;
 
-  Node* copy_tree_node(Node* node, uintV src) {
+  inline Node* copy_tree_node(Node* node, uintV src) {
     if (node) {
       auto entry = Tree::get_entry(node);
       entry.second = lists::copy_node(entry.second);
@@ -1013,7 +1013,7 @@ namespace tree_plus {
   }
 
 
-  Node* insert_rightmost(Node* root, AT* to_insert, uintV src) {
+  inline Node* insert_rightmost(Node* root, AT* to_insert, uintV src) {
     auto mr = treeplus_c::rightmost(root); assert(mr.valid);
     uintV right_key = mr.value.first; auto right_arr = mr.value.second;
 

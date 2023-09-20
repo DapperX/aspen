@@ -162,7 +162,7 @@ block_allocator::block_allocator(size_t block_size,
   blocks_allocated = 0;
   block_size_ = block_size;
   list_length = (list_length_ == 0) ? default_list_bytes / block_size : list_length_;
-  max_blocks = (max_blocks_ == 0) ? (3*getMemorySize()/block_size)/4 : max_blocks_;
+  max_blocks = (max_blocks_ == 0) ? (3*getMemorySize_pbbs()/block_size)/4 : max_blocks_;
 
   reserve(reserved_blocks);
 

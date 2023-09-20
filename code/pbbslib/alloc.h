@@ -3,7 +3,7 @@
 #ifdef USEMALLOC
 inline void* my_alloc(size_t i) {return malloc(i);}
 inline void my_free(void* p) {free(p);}
-void allocator_clear() {}
+inline void allocator_clear() {}
 
 #else
 
@@ -103,7 +103,7 @@ struct mem_pool {
   static constexpr int num_buckets = 22;
   std::atomic<long> allocated{0};
   std::atomic<long> used{0};
-  size_t mem_size{getMemorySize()};
+  size_t mem_size{getMemorySize_pbbs()};
   struct small_allocator small_alloc;
 
   mem_pool() {

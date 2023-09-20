@@ -19,7 +19,7 @@
 #endif
 
 #else
-#error "Unable to define getMemorySize( ) for an unknown OS."
+#error "Unable to define getMemorySize_pbbs( ) for an unknown OS."
 #endif
 
 
@@ -27,7 +27,7 @@
 /**
  * Returns the size of physical memory (RAM) in bytes.
  */
-static size_t getMemorySize( )
+static size_t getMemorySize_pbbs( )
 {
 #if defined(_WIN32) && (defined(__CYGWIN__) || defined(__CYGWIN32__))
   /* Cygwin under Windows. ------------------------------------ */

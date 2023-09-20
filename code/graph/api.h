@@ -13,7 +13,7 @@ using treeplus_graph = traversable_graph<sym_immutable_graph_tree_plus>;
 
 static const string default_file_name = "";
 
-auto build_large_compressed_graph(string fname, bool is_symmetric, size_t n_parts=1) {
+inline auto build_large_compressed_graph(string fname, bool is_symmetric, size_t n_parts=1) {
 
   auto SS = mmapStringFromFile(fname.c_str());
   char* s = SS.first;
@@ -174,7 +174,7 @@ auto build_large_compressed_graph(string fname, bool is_symmetric, size_t n_part
   return versioned_graph<treeplus_graph>(std::move(G));
 }
 
-auto initialize_graph(string fname="", bool mmap=false, bool is_symmetric=true, bool compressed=false, size_t n_parts=1) {
+inline auto initialize_graph(string fname="", bool mmap=false, bool is_symmetric=true, bool compressed=false, size_t n_parts=1) {
   if (fname == "") {
     cout << "Unimplemented!" << endl;
     exit(0);
@@ -198,11 +198,11 @@ auto initialize_graph(string fname="", bool mmap=false, bool is_symmetric=true, 
 }
 
 
-auto empty_treeplus_graph() {
+inline auto empty_treeplus_graph() {
   return versioned_graph<treeplus_graph>();
 }
 
-auto initialize_treeplus_graph(commandLine& P) {
+inline auto initialize_treeplus_graph(commandLine& P) {
   string fname = string(P.getOptionValue("-f", default_file_name.c_str()));
   bool mmap = P.getOption("-m");
   bool is_symmetric = P.getOption("-s");
@@ -212,7 +212,7 @@ auto initialize_treeplus_graph(commandLine& P) {
   return initialize_graph(fname, mmap, is_symmetric, compressed, n_parts);
 }
 
-auto get_graph_edges(const char* fname, bool is_symmetric, bool mmap=false) {
+inline auto get_graph_edges(const char* fname, bool is_symmetric, bool mmap=false) {
   auto T = read_unweighted_graph(fname, is_symmetric, mmap);
   size_t n = get<0>(T); size_t m = get<1>(T);
   uintE* offsets = get<2>(T); uintV* edges = get<3>(T);

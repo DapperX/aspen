@@ -123,7 +123,7 @@ void vertex_map(vertex_subset& vs, F f) {
 // Adds vertices to a vertex_subset vs.
 // Caller must ensure that every v in new_verts is not already in vs
 // Note: Mutates the given vertex_subset.
-void add_to_vsubset(vertex_subset& vs, uintV *new_verts,
+inline void add_to_vsubset(vertex_subset& vs, uintV *new_verts,
     uintV num_new_verts) {
   if (vs.is_dense) {
     parallel_for (0, num_new_verts, [&] (size_t i) {

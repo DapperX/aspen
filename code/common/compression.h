@@ -46,7 +46,7 @@ namespace compression {
   /*
     Compresses the first edge, writing target-source and a sign bit.
   */
-  long compress_first_neighbor(uchar *start, size_t offset, long source, long target) {
+  inline long compress_first_neighbor(uchar *start, size_t offset, long source, long target) {
     long diff = target - source;
     long preCompress = diff;
     int bytesUsed = 0;

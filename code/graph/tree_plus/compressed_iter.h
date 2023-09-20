@@ -6,7 +6,7 @@
 
 namespace compressed_lists {
 
-  size_t node_size(uchar* node) {
+  inline size_t node_size(uchar* node) {
     if (node) {
       return *((uint16_t*)node);
     }

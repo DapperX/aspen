@@ -78,7 +78,7 @@ struct __mallopt {
   }
 };
 
-__mallopt __mallopt_var;
+static __mallopt __mallopt_var;
 #endif
 #endif
 
