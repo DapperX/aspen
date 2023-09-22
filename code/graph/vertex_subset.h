@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <limits>
+#include <memory>
 
 using namespace std;
 
@@ -36,8 +37,8 @@ struct vertex_subset {
   }
 
   void del() {
-    if (s) { pbbs::free_array(s); s = nullptr; }
-    if (d) { pbbs::free_array(d); d = nullptr; }
+    if (s) { /*pbbs::free_array(s);*/ s = nullptr; }
+    if (d) { /*pbbs::free_array(d);*/ d = nullptr; }
   }
 
   bool is_empty() {
