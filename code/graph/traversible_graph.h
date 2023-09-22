@@ -266,7 +266,7 @@ struct traversable_graph : private graph {
       uintV v = vs.s[i];
       auto mv = G::find_vertex(v);
       if (mv.valid) {
-        vertices[i] = make_pair(v, mv.value);
+        vertices[i] = make_pair(v, std::move(mv.value));
       } else {
         get<0>(vertices[i]) = UINT_V_MAX;
       }
@@ -274,7 +274,7 @@ struct traversable_graph : private graph {
     fetch_t.stop();
     size_t total_edges = 0;
     other_t.start();
-    auto size_map = pbbs::sequence<size_t>(vertices.size(), [&] (size_t i) {
+    auto size_map = pbbs::delayed_seq<size_t>(vertices.size(), [&] (size_t i) {
       const auto& vv = vertices[i];
       if (get<0>(vv) != UINT_V_MAX) {
         return vertices[i].second.size();
@@ -295,6 +295,60 @@ struct traversable_graph : private graph {
       sparse_t.stop();
       return ret;
     }
+  }
+
+  template <class F>
+  auto edge_map_single(vertex_subset& vs, F f, timer& sparse_t, timer& dense_t, timer& fetch_t, timer& other_t, const flags fl=0) {
+    // size_t n = vs.n;
+    // size_t m = G::num_edges();
+    // size_t threshold = m/20;
+
+    fetch_t.start();
+    vtx vertices;
+    vs.to_sparse();
+    {
+      uintV v = vs.s[0];
+      auto mv = G::find_vertex(v);
+      if (mv.valid) {
+        vertices = make_pair(v, std::move(mv.value));
+      } else {
+        get<0>(vertices) = UINT_V_MAX;
+      }
+    }
+    fetch_t.stop();
+
+    size_t total_edges = 0;
+    other_t.start();
+    auto size_map = [&] {
+      const auto& vv = vertices;
+      if (get<0>(vv) != UINT_V_MAX) {
+        return vertices.second.size();
+      } else {
+        return static_cast<size_t>(0);
+      }
+    };
+    total_edges = size_map();
+    other_t.stop();
+
+    sparse_t.start();
+    // auto ret = edge_map_sparse(vertices, vs, f, fl);
+    {
+      size_t m = 1;
+
+      {
+        const auto &[v,EL] = vertices;
+        // map over the edgelist.
+        if (v != UINT_V_MAX) {
+          auto map_f = [&] (const uintV& ngh, size_t ind) {
+            if (f.cond(ngh)) f.updateAtomic(v, ngh);
+          };
+          EL.map_elms(v, map_f);
+        }
+      }
+      sparse_t.stop();
+      return vertex_subset(vs.n);
+    }
+    // return ret;
   }
 
   template <class F>
