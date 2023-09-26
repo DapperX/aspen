@@ -122,6 +122,33 @@ inline void parallel_run(Job job, int num_threads=0) {
   job();
 }
 
+// the Parlay scheduler
+#elif defined(PARLAYSCHE)
+#define PAR_GRANULARITY 512
+#include <utility>
+#include "parlay/parallel.h"
+
+inline int num_workers() { return (int)parlay::num_workers(); }
+inline int worker_id() { return (int)parlay::worker_id(); }
+inline void set_num_workers(int n) { (void)n; }
+
+template <class F>
+inline void parallel_for(long start, long end, F f,
+       long granularity,
+       bool conservative) {
+  parlay::parallel_for(start, end, std::move(f), granularity, conservative);
+}
+
+template <typename Lf, typename Rf>
+inline void par_do(Lf left, Rf right, bool conservative) {
+  parlay::par_do(std::move(left), std::move(right), conservative);
+}
+
+template <typename Job>
+inline void parallel_run(Job job, int num_threads=0) {
+  job();
+}
+
 // Guy's scheduler (ABP)
 #elif defined(HOMEGROWN)
 #define PAR_GRANULARITY 512
