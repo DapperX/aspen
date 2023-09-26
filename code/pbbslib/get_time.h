@@ -19,9 +19,10 @@ struct timer {
   }
 
   double get_time() {
-    timeval now;
-    gettimeofday(&now, &tzp);
-    return ((double) now.tv_sec) + ((double) now.tv_usec)/1000000.;
+    // timeval now;
+    // gettimeofday(&now, &tzp);
+    // return ((double) now.tv_sec) + ((double) now.tv_usec)/1000000.;
+    return 0.0;
   }
 
   void start () {
