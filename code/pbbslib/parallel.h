@@ -172,7 +172,7 @@ inline void parallel_run(Job job, int num_threads=0) {
 #ifdef NOTMAIN
 extern fork_join_scheduler fj;
 #else
-static fork_join_scheduler fj;
+fork_join_scheduler fj;
 #endif
 
 // Calls fj.destroy() before the program exits
