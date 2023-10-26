@@ -10,7 +10,7 @@ using read_iter = uncompressed_iter::read_iter;
 
 // select a head with probability 1/2^{head_frequency}
 // expected list size is equal to 2^{head_frequency}
-static constexpr const size_t head_frequency = 6;
+static constexpr const size_t head_frequency = 8;
 static constexpr const size_t head_mask = (1 << head_frequency) - 1;
 
 static bool is_head(const uintV& vtx_id) {
