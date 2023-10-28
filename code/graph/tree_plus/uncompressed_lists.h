@@ -399,23 +399,68 @@ uintV* union_nodes(uintV const* l, uintV const* r, uintV src) {
 
 template <class P>
 uintV* filter(uintV const* node, uintV src, P& p) {
-  cout << "Unimplemented" << endl;
-  exit(-1);
-  return nullptr;
+  if (!node) return nullptr;
+  auto it = uncompressed_iter::read_iter(node, src);
+  auto write_iter = uncompressed_iter::write_iter(src, it.deg);
+  for (size_t i = 0; i < it.deg; i++) {
+    uintV ngh = it.next();
+    if (p(ngh)) write_iter.compress_next(ngh);
+  }
+  write_iter.finish();
+  return write_iter.node_ptr;
 }
 
 size_t intersect(uintV* l, uintV l_src, uintV* r, uintV r_src) {
-  cout << "Unimplemented" << endl;
-  exit(-1);
-  return 0;
+  if (l && r) {
+    return intersect(l + 1, l[0], r + 1, r[0]);
+  }
+  return static_cast<size_t>(0);
 }
 
 // returns r_node / it
-uintV* difference_it_and_node(uncompressed_iter::read_iter& it, size_t l_size,
-                              const uintV* r_node, uintV src) {
-  cout << "Unimplemented" << endl;
-  exit(-1);
-  return nullptr;
+uintV* difference_it_and_node(read_iter& it, size_t l_size, const uintV* r_node,
+                              uintV src) {
+  assert(r_node);
+  uintV const* r = r_node + 1;
+  size_t r_size = r_node[0];
+
+  auto write_iter = uncompressed_iter::write_iter(src, r_size);
+  size_t l_i = 0, r_i = 0;
+  uintV lv = it.next(), rv = r[r_i];
+  while (l_i < l_size && r_i < r_size) {
+    if (lv < rv) {
+      write_iter.compress_next(lv);
+      l_i++;
+      if (l_i < l_size) {
+        lv = it.next();
+      }
+    } else if (lv > rv) {
+      write_iter.compress_next(rv);
+      r_i++;
+      if (r_i < r_size) {
+        rv = r[r_i];
+      }
+    } else {  // intersect, remove rv
+      l_i++;
+      r_i++;
+      if (l_i < l_size) {
+        lv = it.next();
+      }
+      if (r_i < r_size) {
+        rv = r[r_i];
+      }
+    }
+  }
+  while (r_i < r_size) {
+    uintV rv = r[r_i];
+    write_iter.compress_next(rv);
+    r_i++;
+    if (r_i < r_size) {
+      rv = r[r_i];
+    }
+  }
+  write_iter.finish();
+  return write_iter.node_ptr;
 }
 
 // returns r / l
