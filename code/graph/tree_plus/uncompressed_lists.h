@@ -351,6 +351,48 @@ uintV* union_arrs(uintV const* l, size_t l_size, uintV const* r, size_t r_size,
   return write_iter.node_ptr;
 }
 
+uintV* difference_its(uintV const* l, size_t l_size, uintV const* r,
+                      size_t r_size, uintV src) {
+  assert(l);
+  assert(r);
+  auto write_iter = uncompressed_iter::write_iter(src, r_size);
+  size_t l_i = 0, r_i = 0;
+  while (l_i < l_size && r_i < r_size) {
+    uintV lv = l[l_i], rv = r[r_i];
+    if (lv < rv) {
+      l_i++;
+      if (l_i < l_size) {
+        lv = l[l_i];
+      }
+    } else if (lv > rv) {
+      write_iter.compress_next(rv);
+      r_i++;
+      if (r_i < r_size) {
+        rv = r[r_i];
+      }
+    } else {  // intersect, remove rv
+      l_i++;
+      r_i++;
+      if (l_i < l_size) {
+        lv = l[l_i];
+      }
+      if (r_i < r_size) {
+        rv = r[r_i];
+      }
+    }
+  }
+  while (r_i < r_size) {
+    uintV rv = r[r_i];
+    write_iter.compress_next(rv);
+    r_i++;
+    if (r_i < r_size) {
+      rv = r[r_i];
+    }
+  }
+  write_iter.finish();
+  return write_iter.node_ptr;
+}
+
 uintV* union_nodes(uintV const* l, uintV const* r, uintV src) {
   return union_arrs(l + 1, l[0], r + 1, r[0], src);
 }
@@ -378,16 +420,9 @@ uintV* difference_it_and_node(uncompressed_iter::read_iter& it, size_t l_size,
 
 // returns r / l
 uintV* difference(uintV const* l, uintV const* r, uintV src) {
-  cout << "Unimplemented" << endl;
-  exit(-1);
-  return nullptr;
-  //    if (l && r == nullptr) return nullptr;
-  //    if (r && l == nullptr) return copy_node(r);
-  //    auto l_it = compressed_iter::read_iter(l, src);
-  //    auto l_size = l_it.deg;
-  //    auto r_it = compressed_iter::read_iter(r, src);
-  //    auto r_size = r_it.deg;
-  //    return difference_its(l_it, l_size, r_it, r_size, src);
+  if (l && r == nullptr) return nullptr;
+  if (r && l == nullptr) return copy_node(r);
+  return difference_its(l + 1, l[0], r + 1, r[0], src);
 }
 
 inline size_t uncompressed_size(uintV const* node, const uintV& src) {
