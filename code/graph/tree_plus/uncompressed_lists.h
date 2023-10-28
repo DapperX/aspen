@@ -394,6 +394,8 @@ uintV* difference_its(uintV const* l, size_t l_size, uintV const* r,
 }
 
 uintV* union_nodes(uintV const* l, uintV const* r, uintV src) {
+  if (l && r == nullptr) return copy_node(l);
+  if (r && l == nullptr) return copy_node(r);
   return union_arrs(l + 1, l[0], r + 1, r[0], src);
 }
 
