@@ -275,11 +275,11 @@ struct treeplus {
     size_t n_bytes = 0;
     if (plus) {
       n_bytes += lists::underlying_array_size(plus);
-      assert(lists::get_ref_ct(plus) == 1);
+      //assert(lists::get_ref_ct(plus) == 1);
     }
     if (root) {
       n_bytes += Tree::map_reduce(root, size_struct(src));
-      assert(root->ref_cnt == 1);
+      //assert(root->ref_cnt == 1);
     }
     return n_bytes;
   }

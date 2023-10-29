@@ -169,7 +169,7 @@ namespace uncompressed_lists {
       } else if (deg <= node_1024::node::integers_per_block) {
         allocator_1024::free(static_cast<node_1024::node*>(node));
       } else {
-        cout << "Freeing node alloc'd with malloc." << endl;
+        // cout << "Freeing node alloc'd with malloc." << endl;
         pbbs::free_array(node);
       }
     }
@@ -203,7 +203,7 @@ namespace uncompressed_lists {
       return (uintV*)allocator_1024::alloc();
     } else {
       size_t arr_size = deg + 1; // check
-      cout << "malloc: deg = " << deg << endl;
+      // cout << "malloc: deg = " << deg << endl;
       return (uintV*)(pbbs::new_array_no_init<uintV>(arr_size));
     }
   }
