@@ -1,11 +1,14 @@
 #pragma once
 
-// #include "compressed_lists.h"
 #include "../../pbbslib/sequence.h"
-#include "uncompressed_lists.h"
 
-// #define lists compressed_lists
-#define lists uncompressed_lists
+#ifdef ASPEN_USE_COMPRESSION
+  #include "compressed_lists.h"
+  #define lists compressed_lists
+#else
+  #include "uncompressed_lists.h"
+  #define lists uncompressed_lists
+#endif
 // #define CHECK_CORRECTNESS 1
 
 namespace tree_plus {
