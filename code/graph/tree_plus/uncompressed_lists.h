@@ -74,7 +74,7 @@ inline size_t count_pred(uintV const* node, const uintV& src, const P& p) {
 }
 
 template <class F>
-inline bool iter_elms(uintV const* node, const uintV& src, const F& f) {
+inline void iter_elms(uintV const* node, const uintV& src, const F& f) {
   if (node) {
     size_t deg = node[0];
     uintV const* edges = node + 1;
@@ -82,7 +82,6 @@ inline bool iter_elms(uintV const* node, const uintV& src, const F& f) {
       f(edges[i]);
     }
   }
-  return false;
 }
 
 template <class F>
@@ -222,21 +221,27 @@ uintV* union_it_and_node(read_iter& it, size_t l_size, uintV const* r_node,
     } else if (lv > rv) {
       write_iter.compress_next(rv);
       r_i++;
-      rv = r[r_i];
+      if (r_i < r_size) {
+        rv = r[r_i];
+      }
     } else {
       write_iter.compress_next(lv);
       l_i++;
       r_i++;
-      rv = r[r_i];
       if (l_i < l_size) {
         lv = it.next();
+      }
+      if (r_i < r_size) {
+        rv = r[r_i];
       }
     }
   }
   while (l_i < l_size) {
     write_iter.compress_next(lv);
     l_i++;
-    if (l_i < l_size) it.next();
+    if (l_i < l_size) {
+      lv = it.next();
+    }
   }
   for (size_t i = r_i; i < r_size; i++) {
     write_iter.compress_next(r[i]);
@@ -301,9 +306,8 @@ tuple<uintV*, uintV> difference_2(uintV const* l, size_t l_size, uintV const* r,
   return make_tuple(ret, ct);
 }
 
-size_t intersect(uintV const* l, size_t l_size, uintV const* r, size_t r_size) {
-  assert(l);
-  assert(r);
+size_t intersect_its(uintV const* l, size_t l_size, uintV const* r,
+                     size_t r_size) {
   size_t ct = 0;
   size_t l_i = 0, r_i = 0;
   while (l_i < l_size && r_i < r_size) {
@@ -353,41 +357,26 @@ uintV* union_arrs(uintV const* l, size_t l_size, uintV const* r, size_t r_size,
 
 uintV* difference_its(uintV const* l, size_t l_size, uintV const* r,
                       size_t r_size, uintV src) {
-  assert(l);
-  assert(r);
+  assert(l_size > 0);
+  assert(r_size > 0);
   auto write_iter = uncompressed_iter::write_iter(src, r_size);
   size_t l_i = 0, r_i = 0;
   while (l_i < l_size && r_i < r_size) {
     uintV lv = l[l_i], rv = r[r_i];
     if (lv < rv) {
       l_i++;
-      if (l_i < l_size) {
-        lv = l[l_i];
-      }
     } else if (lv > rv) {
       write_iter.compress_next(rv);
       r_i++;
-      if (r_i < r_size) {
-        rv = r[r_i];
-      }
     } else {  // intersect, remove rv
       l_i++;
       r_i++;
-      if (l_i < l_size) {
-        lv = l[l_i];
-      }
-      if (r_i < r_size) {
-        rv = r[r_i];
-      }
     }
   }
   while (r_i < r_size) {
     uintV rv = r[r_i];
     write_iter.compress_next(rv);
     r_i++;
-    if (r_i < r_size) {
-      rv = r[r_i];
-    }
   }
   write_iter.finish();
   return write_iter.node_ptr;
@@ -414,7 +403,7 @@ uintV* filter(uintV const* node, uintV src, P& p) {
 
 size_t intersect(uintV* l, uintV l_src, uintV* r, uintV r_src) {
   if (l && r) {
-    return intersect(l + 1, l[0], r + 1, r[0]);
+    return intersect_its(l + 1, l[0], r + 1, r[0]);
   }
   return static_cast<size_t>(0);
 }
@@ -426,12 +415,14 @@ uintV* difference_it_and_node(read_iter& it, size_t l_size, const uintV* r_node,
   uintV const* r = r_node + 1;
   size_t r_size = r_node[0];
 
+  assert(l_size > 0);
+  assert(r_size > 0);
+
   auto write_iter = uncompressed_iter::write_iter(src, r_size);
   size_t l_i = 0, r_i = 0;
   uintV lv = it.next(), rv = r[r_i];
   while (l_i < l_size && r_i < r_size) {
     if (lv < rv) {
-      write_iter.compress_next(lv);
       l_i++;
       if (l_i < l_size) {
         lv = it.next();
@@ -454,12 +445,9 @@ uintV* difference_it_and_node(read_iter& it, size_t l_size, const uintV* r_node,
     }
   }
   while (r_i < r_size) {
-    uintV rv = r[r_i];
+    rv = r[r_i];
     write_iter.compress_next(rv);
     r_i++;
-    if (r_i < r_size) {
-      rv = r[r_i];
-    }
   }
   write_iter.finish();
   return write_iter.node_ptr;
