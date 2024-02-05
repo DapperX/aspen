@@ -185,7 +185,24 @@ namespace uncompressed_lists {
   }
 
   inline uintV underlying_array_size(uintV* node_int) {
-    return 0;
+    if(!node_int)
+        return 0;
+
+    uintV deg = node_int[0];
+    if (deg <= node_32::node::integers_per_block)
+      return 32*sizeof(uintV);
+    if (deg <= node_64::node::integers_per_block)
+      return 64*sizeof(uintV);
+    if (deg <= node_128::node::integers_per_block)
+      return 128*sizeof(uintV);
+    if (deg <= node_256::node::integers_per_block)
+      return 256*sizeof(uintV);
+    if (deg <= node_512::node::integers_per_block)
+      return 512*sizeof(uintV);
+    if (deg <= node_1024::node::integers_per_block)
+      return 1024*sizeof(uintV);
+    
+    return deg*sizeof(uintV); 
   }
 
   inline uintV* alloc_node(size_t deg) {
